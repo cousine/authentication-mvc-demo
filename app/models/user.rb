@@ -13,7 +13,10 @@ class User < ApplicationRecord
     self.hashed_password = User.generate_password_hash(value, self.password_seed)
   end
 
-  def self.authenticate(email, password)
+  def self.authenticate(user_params)
+    email = user_params[:email]
+    password = user_params[:password]
+
     user = User.find_by email: email
     if user.present?
       password_to_check = User.generate_password_hash(password, user.password_seed)
@@ -22,7 +25,7 @@ class User < ApplicationRecord
       end
     end
     
-    return false
+    return User.new(email: email)
   end
 
   def self.generate_password_hash(password, password_seed)

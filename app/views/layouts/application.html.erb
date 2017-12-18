@@ -9,6 +9,10 @@
   </head>
 
   <body>
+    <%= flash[:notice] %>
+    <% if params[:controller] != "sessions" %>
+      <%= link_to "Logout", session_path, method: :delete %>
+    <% end %>
     <%= yield %>
   </body>
 </html>
