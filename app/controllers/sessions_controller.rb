@@ -7,14 +7,15 @@ class SessionsController < ApplicationController
   end
 
   def create
-    @user = User.authenticate(params[:user])
+    user_authenticate_service = AuthenticateUser.new params[:user][:email], params[:user][:password]
 
     respond_to do |format|
-      if @user.persisted?
+      begin
+        @user = user_authenticate_service.perform
         session[:user] = { id: @user.id, email: @user.email }
-        #byebug
+        
         format.html {redirect_to session[:current_url]}
-      else
+      rescue ActiveRecord::RecordNotFound
         flash[:notice] = 'Invalid email/password combination'
         format.html { render :new }
       end
